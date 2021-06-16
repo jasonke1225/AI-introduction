@@ -1,12 +1,14 @@
 ### initialize the dataframe from usefulData and the beginning day we need
 ### revived from https://github.com/AI4Finance-LLC/Deep-Reinforcement-Learning-for-Automated-Stock-Trading-Ensemble-Strategy-ICAIF-2020/blob/master/env/EnvMultipleStock_trade.py
 
+import itertools
 import numpy as np
 import pandas as pd
 from gym.utils import seeding
 import gym
 from gym import spaces
 import matplotlib.pyplot as plt
+from itertools import product
 
 # shares normalization factor
 # 100 shares per trade
@@ -37,6 +39,7 @@ class StockEnv(gym.Env):
 
         # action_space normalization and shape is STOCK_DIM
         self.action_space = spaces.Box(low = -1, high = 1,shape = (STOCK_DIM,)) 
+        self.create_table()
 
         # Shape = 181: [Current Balance]+[prices 1-30]+[owned shares 1-30] 
         # +[macd 1-30]+ [rsi 1-30] + [cci 1-30] + [adx 1-30]
@@ -66,6 +69,7 @@ class StockEnv(gym.Env):
 
     def _sell_stock(self, index, action):
         # perform sell action based on the sign of the action
+        action = float(action)
         if self.state[index+STOCK_DIM+1] > 0:
             #update balance
             self.state[0] += \
@@ -81,6 +85,7 @@ class StockEnv(gym.Env):
 
     
     def _buy_stock(self, index, action):
+        action = float(action)
         # perform buy action based on the sign of the action
         available_amount = self.state[0] // self.state[index+1]
         # print('available_amount:{}'.format(available_amount))
@@ -96,7 +101,8 @@ class StockEnv(gym.Env):
         self.trades+=1
         
     def step(self, actions):
-        print(self.dates[self.Didx])
+        # print()
+        # print(self.dates[self.Didx], actions)
         self.terminal = self.dates[self.Didx] >= self.lastDate
         # print(actions)
 
@@ -108,6 +114,7 @@ class StockEnv(gym.Env):
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             
             #print("end_total_asset:{}".format(end_total_asset))
+            # print(self.asset_memory)
             df_total_value = pd.DataFrame(self.asset_memory)
             df_total_value.to_csv('results/account_value_train.csv')
             #print("total_reward:{}".format(self.state[0]+sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):61]))- INITIAL_ACCOUNT_BALANCE ))
@@ -115,6 +122,7 @@ class StockEnv(gym.Env):
             #print("total_trades: ", self.trades)
             df_total_value.columns = ['account_value']
             df_total_value['daily_return']=df_total_value.pct_change(1)
+            # print(df_total_value['daily_return'])
             sharpe = (252**0.5)*df_total_value['daily_return'].mean()/ \
                   df_total_value['daily_return'].std()
             #print("Sharpe: ",sharpe)
@@ -137,17 +145,16 @@ class StockEnv(gym.Env):
             begin_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
             #print("begin_total_asset:{}".format(begin_total_asset))
-            
-            argsort_actions = np.argsort(actions)
-            
-            sell_index = argsort_actions[:np.where(actions < 0)[0].shape[0]]
-            buy_index = argsort_actions[::-1][:np.where(actions > 0)[0].shape[0]]
+            sell_index = np.where(actions < 0)[0].tolist()
+            buy_index = np.where(actions > 0)[0].tolist()
 
             for index in sell_index:
-                # print('take sell action'.format(actions[index]))
+                # print(index)
+                # print('take sell action {}'.format(actions[index]))
                 self._sell_stock(index, actions[index])
 
             for index in buy_index:
+                # print(index)
                 # print('take buy action: {}'.format(actions[index]))
                 self._buy_stock(index, actions[index])
 
@@ -199,8 +206,16 @@ class StockEnv(gym.Env):
         return self.state
     
     def render(self, mode='human'):
-        return self.state
+        return self.reward
 
     def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
+
+    def create_table(self):
+        act_idx = list(np.arange(-1,1.1, 0.25))
+        act_tab = [p for p in itertools.product(act_idx, repeat=3)]
+        self.act_tab = [np.asarray(act) for act in act_tab]
+    
+    def convert_action(self, idx):
+        return self.act_tab[idx]
