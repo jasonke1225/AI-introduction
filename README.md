@@ -17,13 +17,13 @@ Since cryptocurrency has become the trend of the world, we figure out several id
 
 - ### Minimum variance profolio
 
-![](https://i.imgur.com/1IG2Odd.png =400x)  
+    <img src="https://i.imgur.com/1IG2Odd.png" width="400">
 
-Since the portfolios are high dimension data, it's hard to visualize the data. So here is the chart of all portfolios after dimension reduction. Each point on the graph is a indivisual portfolio and the axes are the revennue and variance corresponding to the portfolio.  
+    Since the portfolios are high dimension data, it's hard to visualize the data. So here is the chart of all portfolios after dimension reduction. Each point on the graph is a indivisual portfolio and the axes are the revennue and variance corresponding to the portfolio.  
 
-It's worth noting that only the points located on the upper half boundary are efficient, because there will be definitely a better choice than the other points, that is, with same variance but higher revenue.
+    It's worth noting that only the points located on the upper half boundary are efficient, because there will be definitely a better choice than the other points, that is, with same variance but higher revenue.  
 
-There is a traditional but useful concept that enable us to maximize the revenue with the lowest risk, which is exactly the minimum variance portfolio strategy. The assets in the portfolio may be risky indivisually, but it turns out that the diversity of these assets will be helpful to reduce the risks and get the cross portfolio on the figure, which is the lowest risk portfolio in the efficient points.
+    There is a traditional but useful concept that enable us to maximize the revenue with the lowest risk, which is exactly the minimum variance portfolio strategy. The assets in the portfolio may be risky indivisually, but it turns out that the diversity of these assets will be helpful to reduce the risks and get the cross portfolio on the figure, which is the lowest risk portfolio in the efficient points.  
 
 - ### DDPG
 
