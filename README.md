@@ -84,6 +84,9 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
 >present here experimental results of the method you have implemented with plots, graphs, images and visualizations
 
 - ### Minimum variance portfolio
+
+    As we know that there's not a better way to visualize the data in four-dimensional space, we will plot the portfolios in the form of revenues and variance. 
+    
     <div style="text-align:center">
         <img src="https://i.imgur.com/1IG2Odd.png" width="300" height="300">
         <img src="https://i.imgur.com/jRSahFG.png" width="300" height="300">
@@ -99,6 +102,12 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
 
     Notice that the main idea to take minimum variance portfolio as strategy is trying to reduce the risk by holding individual assets. However, due to the lack of diversity and independence in this case, the strategy here decides to hold only Bitcoins because it has the smaller variance but higher expected revenue.
     
+    <div style="text-align:center">
+        <img src="https://i.imgur.com/TVfMcAa.png" width="300">
+    </div>
+
+    After trading for one years, the money changes from 1,000,000 dollars to 5,007,404 dollars. The return on investment using minimum variance portfolio strategy is over 400%. 
+
 
 - ### DDPG
 
