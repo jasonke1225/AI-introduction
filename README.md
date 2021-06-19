@@ -89,24 +89,24 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
     
     <div style="text-align:center">
         <img src="https://i.imgur.com/1IG2Odd.png" width="300" height="300">
-        <img src="https://i.imgur.com/jRSahFG.png" width="300" height="300">
+        <img src="https://i.imgur.com/YM9WWZQ.png" width="300" height="300">
     </div>
 
     Since it's hard to find out all the possible portfolio, we randomly sample 10000 portfolios and plot their corresponding revenue and variance on the right graph. The filled region is the rough range decided by those sample points. However, as shown in the graph, the region is not like the left graph that we expect to have. I think the main reason is that the domain of our investment only contains 3 types of cryptocurrency, and these 3 cryptocurrencies are highly dependent to each other. 
 
     <div style="text-align:center">
-        <img src="https://i.imgur.com/tZy0RB0.png" width="300" height="300">
+        <img src="https://i.imgur.com/lQvuTTq.png" width="300" height="300">
     </div>
 
-    By concept of gradient descent, we can find the portfolio with minimum variance as shown in the graph, the red lines stand for the moving path with different initial weights. They finally reach the upper left point which is the portfolio with weight $w = (w_{Bitcoin},w_{Ethereum},w_{Monero}) = (1,0,0)$ and its corresponding variance $V \approx 0.0010544710735649382$ 
+    By concept of gradient descent, we can find the portfolio with minimum variance as shown in the graph, the red lines stand for the moving path with different initial weights. We finally obtain the upper left point which is the portfolio with weight $w = (w_{Bitcoin},w_{Ethereum},w_{Monero}) \approx (0.8547,0.1453,0)$ and its corresponding variance $V \approx 0.002012559294621305$ 
 
     Notice that the main idea to take minimum variance portfolio as strategy is trying to reduce the risk by holding individual assets. However, due to the lack of diversity and independence in this case, the strategy here decides to hold only Bitcoins because it has the smaller variance but higher expected revenue.
     
     <div style="text-align:center">
-        <img src="https://i.imgur.com/TVfMcAa.png" width="300">
+        <img src="https://i.imgur.com/pVp2Du6.png" width="300">
     </div>
 
-    After trading for one years, the money changes from 1,000,000 dollars to 5,007,404 dollars. The return on investment using minimum variance portfolio strategy is over 400%. 
+    After trading for one years, the money changes from 1,000,000 dollars to 7,138,033 dollars. The return on investment using minimum variance portfolio strategy is over 600%. 
 
 
 - ### DDPG
