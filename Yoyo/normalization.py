@@ -1,0 +1,22 @@
+def normalize(state):
+    temp_state = []
+    temp_state.append(0.001*state[0])
+    temp_state.append((state[1]-2478330.0752)/188151.0787)
+    temp_state.append((state[2]-9696.347622)/14234.47008)
+    temp_state.append((state[3]-2515.821571)/2615.29795)
+    temp_state.append(0.01*state[4])
+    temp_state.append(0.01*state[5])
+    temp_state.append(0.01*state[6])
+    temp_state.append((state[7]-5177.579363)/16123.41258)
+    temp_state.append((state[8]-270.7733533)/1248.568074)
+    temp_state.append((state[9]-35.71445465)/269.3077132)
+    temp_state.append((state[10]-54.79755959)/10.66533212)
+    temp_state.append((state[11]-52.87394922)/11.70261057)
+    temp_state.append((state[12]-52.65588396)/8.861974927)
+    temp_state.append((state[13]-33.72752522)/120.876015)
+    temp_state.append((state[14]-25.8489596)/122.6781467)
+    temp_state.append((state[15]-25.2647541)/119.2325979)
+    temp_state.append((state[16]-29.77151467)/21.96257966)
+    temp_state.append((state[17]-30.84369715)/21.36197042)
+    temp_state.append((state[18]-27.72517914)/20.37034246)
+    return temp_state
