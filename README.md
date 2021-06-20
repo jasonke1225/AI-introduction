@@ -1,7 +1,7 @@
 # AI-introduction  
 NYCUCS 2021 spring, final project.  
 Automated Stock Trading  
-Deep reinforce learning with ppo, min variance, DDPG
+Deep reinforcement learning with ppo, min variance, DDPG
 
 
 ## Github repo link
@@ -17,6 +17,8 @@ Since cryptocurrency has become the trend of the world, we figure out several id
 
 In this project, we are engaging in the investment of 3 cryptocurrency. They are respectively Bitcoin, Ethereum and Monero.
 
+
+
 - ### Minimum variance portfolio
 
     <img src="https://i.imgur.com/1IG2Odd.png" width="400">
@@ -27,19 +29,38 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
 
     There is a traditional but useful concept that enable us to maximize the revenue with the lowest risk, which is exactly the minimum variance portfolio strategy. The assets in the portfolio may be risky individually, but it turns out that the diversity of these assets will be helpful to reduce the risks and get the cross portfolio on the figure, which is the lowest risk portfolio in the efficient points.  
 
+- ### PPO
+
+    <img src="https://i.imgur.com/FUCYg0Z.jpg" width="600">
+
+
+    Deep reinforcement learning(DRL) is applied in lots of fields and has a nice performace today, therefore, we think it may be a good try to apply DRL to cryptos. The reason choosing PPO as one of our algorithms is due to its charachteristic of actor-critc approach fitting in a continuos action space. Nowadays, Actor-critic approaches are widely used in financial technogy. In addition, because of PPO's unique updating method minimizing the clipped and normal objective, the stableness of PPO also makes it a good candidate to apply.
+
+
 - ### DDPG
 
-- ### PPO
+    ![](https://i.imgur.com/fxLmcZ8.png)
+
+    Deep Deterministic Policy Gradient(DDPG) is one of the off-policy reinforment learning algorithm which can deal with the high-dimension action space. With the characheristic of off-policy learning as DQN algorithm, it use the replay buffer to minimize the correlation of the training data and estimate the Q value of the policy. The actor-critic structure, in constrast, provide it the ability to handle the high-dimension and continuous action space as well as to update the police.  
+    
+    The reason we choose DDGP as the research method is because of its performance in previous research where it has a intermediate performance of all methods. We expect to observe a similar result corresponding to all the other method we apply in this environment.  
+    
 
 
 ## Related work:
 
 >previous methods that have explored a similar problem
+- We refer to the paper, "Deep Reinforcement Learning for Automated Stock Trading: An Ensemble Strategy". It used mutiple agorithms in stock trading. The main purpose is to compare the policy generated from the agorithms it choose in stock.
+- The result of the research is that PPO reachs the best performance; MSE strategy reachs the worst; DDPG has the middle performance between the two.
+- Therefore, we choose the three algorithm as our research method on cryptocurrency and use the similiar environment to train our model.
 
 
 ## Bonus: 
 
 >Say why your method is better than previous work; and/or summarize the key main contributions of your work
+
+
+- The environment state in the paper seems to deal without preprocessing, which may be a huge burden to the training of neural network. Moreover, the change of the cryptocurrency is much more considerable, which might lead to the ploicy explosion in our neural network. We, as the result normalized and reweighted the states to facilitate the training. Due to the preprocessing method we do, it really improves our training process, especially in PPO. 
 
 
 ## Methodology: 
@@ -75,18 +96,58 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
 
     However, the final portfolio we chose might be a local minimum rather than the global minimum. So we will randomly pick some weights to be the initial weight and follow the same procedure trying to prevent such situation.
 
+    
+- ### PPO
+    
+    PPO, Proximal Policy Optimization, evolves from Trust Region Policy Optimization. In this project, instead of using the adatptive KL penalty version of PPO, we used the clipped surragate objective version of PPO.  
+    
+    First,in PPO, we collect trajectories under a policy $\pi_k = \pi(\theta_{k})$ and estimate its advantage by using an advantage estimate function. Here, we use:
+    $$A^{\pi_k} = G_{t} - V^{\pi_k}$$
+    $$A: advantage, G:accumulated\:reward,V:state\:value$$
+    Next, we take the minimum from the two surrogate functions and get its expected value. After that, we get the arguments of the maxima to update our policy parameters $\theta$. We repeat this step for $K$ times. 
+    
+    The PPO algorithm is as follow:
+
+
+    <img src="https://i.imgur.com/m3hYPKf.png" width="800">
+    
+    (Picture Credit: Katerina Fragkiadaki))
+
+    
 - ### DDPG
 
-- ### PPO
+    Taking the advantage Actor-Critic, DDPG apply the Actor Network to choose the action, the Critic Network to evaluate the Q value of which. For example, when a state comes to the Actor Network in a six-dimension action space environment, it will return six action respectively to each diamension. Then, sending the state and the action generated from the Actor Network to the Critic Network, it will generate a Q value.  
+    
+    Due to its off-policy character, after getting the action from Actor Network, we do not directly interact with the environment with the action. It need the addition of the Randomness on action to improve the exploration rate.
+    
+    Further, since the Q value it returns, DDPG do the similiar method to minimize loss on Critic Network in temporal difference as DQN with the replay buffer:
+    $$L = \mathbb{E}[(r_i + \gamma Q^{'}(s_{i+1},\mu^{'}(s_{i+1})) - Q(s_i,a_i)) ^{2}] $$
+    $$Q: critic\:network,Q^{'}: target\:critic\:network, \:\mu^{'}:target\:actor\:network,\:$$
+    And update the Actor Network by the method in deterministic policy gradient(DPG). Therefore, DDPG maintain a current network and the target network for both network mentioned above like what DQN does but update the target network by degrees for the sake of stability.
+    
+    At last, the most important and difficult point is to initialize the parameter in the neural network. With the appropriate initialization, the algorithm could efficiently converge to the optimal policy, or the algorithm might never converge. It is much more sensitive than other two algorithm. 
+    
+    The DDPG algorithm is as follow:
+    
+    ![](https://i.imgur.com/tLvfNhh.png)
+
+
 
 
 ## Experiments:
 >present here experimental results of the method you have implemented with plots, graphs, images and visualizations
 
-- ### Minimum variance portfolio
+1.  Training Data : 2015/08/08 ~ 2019/05/14
+1.  Testing Data : 2019/05/14 ~ 2021/05/14
+1.  cryptocurrency value : 
+    | Testing Date | 2019/05/14 | 2021/05/14 | ratio |
+    | ------------ | ---------- | ---------- |------ |
+    |   Bitcoin    | 248794.81  | 1393263.01 | 560%  |
+    |   Bitcoin    | 6757.9     | 113936.23  | 1686% |
+    |   Bitcoin    | 2585.37    | 11523.08   | 446%  |
 
-    As we know that there's not a better way to visualize the data in four-dimensional space, we will plot the portfolios in the form of revenues and variance. 
-    
+
+- ### Minimum variance portfolio
     <div style="text-align:center">
         <img src="https://i.imgur.com/1IG2Odd.png" width="300" height="300">
         <img src="https://i.imgur.com/YM9WWZQ.png" width="300" height="300">
@@ -98,22 +159,37 @@ In this project, we are engaging in the investment of 3 cryptocurrency. They are
         <img src="https://i.imgur.com/lQvuTTq.png" width="300" height="300">
     </div>
 
-    By concept of gradient descent, we can find the portfolio with minimum variance as shown in the graph, the red lines stand for the moving path with different initial weights. We finally obtain the upper left point which is the portfolio with weight $w = (w_{Bitcoin},w_{Ethereum},w_{Monero}) \approx (0.8547,0.1453,0)$ and its corresponding variance $V \approx 0.002012559294621305$ 
+    By concept of gradient descent, we can find the portfolio with minimum variance as shown in the graph, the red lines stand for the moving path with different initial weights. We finally obtain the upper left point which is the portfolio with weight $w =(w_{Bitcoin},w_{Ethereum},w_{Monero}) \approx (0.8547,0.1453,0)$ and its corresponding variance $V \approx 0.002012559294621305$
 
-    Notice that the main idea to take minimum variance portfolio as strategy is trying to reduce the risk by holding individual assets. However, due to the lack of diversity and independence in this case, the strategy here decides to hold only Bitcoins because it has the smaller variance but higher expected revenue.
+    Notice that the main idea to take minimum variance portfolio as strategy is trying to reduce the risk by holding individual assets. However, due to the lack of diversity and independence in this case, the strategy here decides to hold Bitcoins the most because it has the smaller variance but higher expected revenue.
     
     <div style="text-align:center">
-        <img src="https://i.imgur.com/pVp2Du6.png" width="300">
+        <img src="https://i.imgur.com/YRExY1s.png" width="300">
     </div>
 
-    After trading for one years, the money changes from 1,000,000 dollars to 7,138,033 dollars. The return on investment using minimum variance portfolio strategy is over 600%. 
+    After trading for two years, the money changes from 1,000,000 dollars to 7,138,033 dollars. The return on investment using minimum variance portfolio strategy is about 610%. 
 
+
+- ### PPO
+    Because of the limitation of our training data, the result of PPO seems not as good as we expected. ~~After training our model by using the data from 2015 to 2019, we test the model between 2019 and 2021.~~ The following fugure is the result of the total asset:
+
+    <div style="text-align:center">
+        <img src="https://i.imgur.com/UtVgkMX.png" width="350">
+    </div>
+    After trading for two years, the toatal asset changes from 1 million to 1.4 million. The return ratio of PPO is about 40%.
+    
 
 - ### DDPG
 
-- ### PPO
-
-
+     DDPG shows a good performance. In the end of the test, its total asset ascends to 7.3 million. The return on investment is bout 630%. 
+    <div style="text-align:center">
+        <img src="https://i.imgur.com/qEg5TY7.png" width="300">
+    </div>
+    
+    To observe the action in the trajectory in detail, DDPG attachs importance to Bitcoin, the main operating is on the one. Here, we guess it is according to the variance of Bitcoin in traing data is high. It, hence, pays attention to Bitcoin.
+    
+    
+    
 ## Conclusion: 
 
 >Take home message
@@ -123,3 +199,10 @@ The minimum variance portfolio doesn't work very well in the market of cryptocur
 On the other hand, the DDPG and PPO .........
 
 ## References
+Hongyang Yang1, Xiao-Yang Liu2, Shan Zhong2, and Anwar Walid3. Deep Reinforcement Learning for Automated
+Stock Trading: An Ensemble Strategy. 2020.
+
+
+Timothy P. Lillicrap∗, Jonathan J. Hunt∗, Alexander Pritzel, Nicolas Heess, Tom Erez, Yuval Tassa, David Silver & Daan Wierstra, CONTINUOUS CONTROL WITH DEEP REINFORCEMENT
+LEARNING. In *ICLR*, 2016.
+
