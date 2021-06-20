@@ -14,18 +14,18 @@ from itertools import product
 # 100 shares per trade
 HMAX_NORMALIZE = 1
 # initial amount of money we have in our account
-INITIAL_ACCOUNT_BALANCE=1000000
+INITIAL_ACCOUNT_BALANCE = 1000000
 # total number of stocks in our portfolio
 STOCK_DIM = 3
 # transaction fee: 1/1000 reasonable percentage
 TRANSACTION_FEE_PERCENT = 0.001
-REWARD_SCALING = 1e-4
+REWARD_SCALING = 1e-3
 
 class StockEnv(gym.Env):
     """A stock trading environment for OpenAI gym"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, df,day = 0):
+    def __init__(self, df,day = 0, terminal_day = 0):
         #super(StockEnv, self).__init__()
         #money = 10 , scope = 1
         self.startDay = day
@@ -35,7 +35,7 @@ class StockEnv(gym.Env):
         Alldate = df.Date.unique()
         self.dates = Alldate[Alldate>=self.startDay]
         self.Didx = 0
-        self.lastDate = self.dates[-1]
+        self.lastDate = terminal_day
 
         # action_space normalization and shape is STOCK_DIM
         self.action_space = spaces.Box(low = -1, high = 1,shape = (STOCK_DIM,)) 
@@ -66,6 +66,8 @@ class StockEnv(gym.Env):
         #self.reset()
         self._seed()
 
+        self.iter = 0
+
 
     def _sell_stock(self, index, action):
         # perform sell action based on the sign of the action
@@ -87,7 +89,7 @@ class StockEnv(gym.Env):
     def _buy_stock(self, index, action):
         action = float(action)
         # perform buy action based on the sign of the action
-        available_amount = self.state[0] // self.state[index+1]
+        available_amount = self.state[0] / self.state[index+1]
         # print('available_amount:{}'.format(available_amount))
 
         #update balance
@@ -108,7 +110,7 @@ class StockEnv(gym.Env):
 
         if self.terminal:
             plt.plot(self.asset_memory,'r')
-            plt.savefig('results/account_value_train.png')
+            plt.savefig('results/account_value_train_'+str(self.iter)+'.png')
             plt.close()
             end_total_asset = self.state[0]+ \
             sum(np.array(self.state[1:(STOCK_DIM+1)])*np.array(self.state[(STOCK_DIM+1):(STOCK_DIM*2+1)]))
@@ -133,6 +135,8 @@ class StockEnv(gym.Env):
             # print('total asset: {}'.format(self.state[0]+ sum(np.array(self.state[1:29])*np.array(self.state[29:]))))
             #with open('obs.pkl', 'wb') as f:  
             #    pickle.dump(self.state, f)
+
+            self.iter += 1
             
             return self.state, self.reward, self.terminal,{}
 
@@ -206,7 +210,7 @@ class StockEnv(gym.Env):
         return self.state
     
     def render(self, mode='human'):
-        return self.reward
+        return self.state
 
     def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)

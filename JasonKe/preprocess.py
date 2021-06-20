@@ -60,8 +60,7 @@ def arrangeData(foldername):
 
 def getArrangedData():
     df = pd.read_csv('usefulData/result.csv')
-    date = df.Date.unique()
-    print(date[date>=20150808])
-    data = df.loc[df.Date==20150808]
+    # date = df.Date.unique()
+    # print(date[date>=20150808])
+    # data = df.loc[df.Date==20150808]
     return df
-getArrangedData()
